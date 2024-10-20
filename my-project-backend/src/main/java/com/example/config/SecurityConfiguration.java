@@ -1,10 +1,13 @@
 package com.example.config;
 
 import com.example.entity.RestBean;
+import com.example.entity.vo.response.AuthorizeVO;
+import com.example.filter.JwtAuthorizeFilter;
+import com.example.utils.JwtUtils;
+import jakarta.annotation.Resource;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.catalina.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,15 +15,22 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.io.IOException;
 
 @Configuration
 public class SecurityConfiguration {
+
+    @Resource
+    JwtUtils utils;
+
+    @Resource
+    JwtAuthorizeFilter jwtAuthorizeFilter;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
@@ -41,6 +51,7 @@ public class SecurityConfiguration {
                 .sessionManagement(conf -> conf
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .addFilterBefore(jwtAuthorizeFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -48,10 +59,14 @@ public class SecurityConfiguration {
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
-
+        String token = utils.creatJwt(user, 1, "小明");
+        AuthorizeVO vo = new AuthorizeVO();
+        vo.setExpire(utils.expireTime());
+        vo.setRole("");
+        vo.setToken(token);
+        vo.setUsername("小明");
         response.setContentType("application/json;charset=UTF-8");
-
-        response.getWriter().write(RestBean.success("success").asJsonString());
+        response.getWriter().write(RestBean.success(vo).asJsonString());
     }
 
     public void onAuthenticationFailure(HttpServletRequest request,
