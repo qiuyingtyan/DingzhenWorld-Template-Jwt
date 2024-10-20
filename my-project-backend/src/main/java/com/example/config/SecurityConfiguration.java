@@ -4,6 +4,7 @@ import com.example.entity.RestBean;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.catalina.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,6 +47,8 @@ public class SecurityConfiguration {
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
+        User user = (User) authentication.getPrincipal();
+
         response.setContentType("application/json;charset=UTF-8");
 
         response.getWriter().write(RestBean.success("success").asJsonString());
