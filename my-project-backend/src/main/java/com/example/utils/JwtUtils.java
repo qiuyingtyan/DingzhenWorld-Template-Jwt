@@ -38,7 +38,6 @@ public class JwtUtils {
         }   catch (JWTVerificationException e) {
             return null;
         }
-
     }
 
     public String creatJwt(UserDetails details, int id, String username) {
@@ -62,7 +61,7 @@ public class JwtUtils {
     public UserDetails toUser(DecodedJWT jwt) {
         Map<String, Claim> claims = jwt.getClaims();
         return User
-                .withUsername(claims.get("name").asString())
+                .withUsername(claims.get("username").asString())
                 .password("*******")
                 .authorities(claims.get("authorities").asArray(String.class))
                 .build();
