@@ -43,7 +43,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(conf -> conf
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**","/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(conf -> conf
@@ -94,7 +94,7 @@ public class SecurityConfiguration {
         PrintWriter writer = response.getWriter();
         String authorization = request.getHeader("Authorization");
         if (utils.invalidateJwt(authorization)) {
-            writer.write(RestBean.success("Logout Success").asJsonString());
+            writer.write(RestBean.success().asJsonString());
         } else {
             writer.write(RestBean.failure(400,"退出登录失败").asJsonString());
         }

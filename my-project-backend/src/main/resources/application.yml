@@ -1,4 +1,13 @@
 spring:
+  mail:
+    host: smtp.163.com
+    username: 17850096172@163.com
+    password: WAmB77xjzsvwkaxR
+  rabbitmq:
+    addresses: 192.168.56.102
+    username: guest
+    password: guest
+    virtual-host: /
   security:
     filter:
       order: -100
@@ -7,7 +16,7 @@ spring:
       expire: 7
   data:
     redis:
-      host: 192.168.56.100
+      host: 192.168.56.102
       port: 6379
       database: 0
   datasource:

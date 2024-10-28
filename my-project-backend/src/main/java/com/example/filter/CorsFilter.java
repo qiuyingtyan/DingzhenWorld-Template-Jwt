@@ -19,15 +19,15 @@ public class CorsFilter extends HttpFilter {
     protected void doFilter(HttpServletRequest request,
                             HttpServletResponse response,
                             FilterChain chain) throws IOException, ServletException {
-        this.addCorsHeaders(request, response);
+        this.addCorsHeader(request, response);
 
         chain.doFilter(request, response);
     }
 
-    private  void addCorsHeaders(HttpServletRequest request, HttpServletResponse response) {
+    private  void addCorsHeader(HttpServletRequest request, HttpServletResponse response) {
         response.addHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
         response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        response.addHeader("Access-Control-Allow-Headerss", "GET, POST, PUT, DELETE, OPTIONS");
+        response.addHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
 
     }
 }

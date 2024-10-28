@@ -4,6 +4,7 @@ import {User} from '@element-plus/icons-vue'
 import {reactive} from 'vue';
 import {login} from "@/net";
 import {ref} from "vue";
+import router from "@/router/index.js";
 
 const formRef = ref();
 
@@ -22,10 +23,11 @@ const rule = {
   ]
 }
 
-function userLogin(){
+function userLogin() {
   formRef.value.validate((valid) => {
     if (valid) {
-      login(form.username, form.password, form.remember,() =>{})
+      login(form.username, form.password, form.remember,
+          () => router.push('/index'))
     }
   })
 }
@@ -49,7 +51,7 @@ function userLogin(){
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="form.password"  maxlength="20" type="password" placeholder="密码">
+          <el-input v-model="form.password" maxlength="20" type="password" placeholder="密码">
             <template #prefix>
               <el-icon>
                 <Lock/>
@@ -60,11 +62,11 @@ function userLogin(){
         <el-row>
           <el-col :span="12" style="text-align: left">
             <el-form-item prop="remember">
-            <el-checkbox v-model="form.remember">记住我</el-checkbox>
+              <el-checkbox v-model="form.remember">记住我</el-checkbox>
             </el-form-item>
           </el-col>
           <el-col :span="12" style="text-align: right">
-            <el-link type="primary" href="/register">忘记密码</el-link>
+            <el-link @click="router.push('/reset')">忘记密码</el-link>
           </el-col>
         </el-row>
       </el-form>
@@ -76,8 +78,9 @@ function userLogin(){
       <span style="font-size: 13px;color: gray">没有账号</span>
     </el-divider>
     <div>
-      <el-button style="width: 270px" type="warning" plain>立即注册</el-button>
+      <el-button @click="router.push('/register')" style="width: 270px" type="warning" plain>立即注册</el-button>
     </div>
+
   </div>
 </template>
 
