@@ -3,10 +3,11 @@ import {ElMessage} from "element-plus";
 
 const authItemName = "authorize"
 
-const defaultFailure = (message, status, url) => {
+const defaultFailure = (url, status, message) => {
     console.warn(`请求地址:${url},状态码:${status},错误信息:${message}`)
     ElMessage.warning(message)
 }
+
 
 const defaultError = (err) => {
     console.error(err)
@@ -42,7 +43,7 @@ function deleteAccessToken() {
 
 function accessHeader() {
     const token = takeAccessToken();
-    return token ? {'Authorization': `Bearer ${takeAccessToken()}`}:{}
+    return token ? {'Authorization': `Bearer ${takeAccessToken()}`} : {}
 }
 
 function internalPost(url, data, header, success, failure, error = defaultError) {
@@ -89,7 +90,7 @@ function login(username, password, remember, success, failure = defaultFailure) 
 
 function logout(success, failure = defaultFailure) {
 
-    get('/api/auth/logout',  ()=> {
+    get('/api/auth/logout', () => {
         deleteAccessToken()
         ElMessage.success('退出登录成功,欢迎恁再次使用')
         success()
@@ -100,5 +101,5 @@ function unauthorized() {
     return !takeAccessToken()
 }
 
-export {login,logout, get, post, unauthorized,accessHeader}
+export {login, logout, get, post, unauthorized, accessHeader}
 
