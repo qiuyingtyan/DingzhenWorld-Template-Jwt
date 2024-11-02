@@ -12,36 +12,30 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * 专用用于处理错误页面的Controller
- */
 @RestController
 @RequestMapping({"${server.error.path:${error.path:/error}}"})
 public class ErrorPageController extends AbstractErrorController {
 
+    // 构造函数，传入ErrorAttributes对象
     public ErrorPageController(ErrorAttributes errorAttributes) {
         super(errorAttributes);
     }
 
-    /**
-     * 所有错误在这里统一处理，自动解析状态码和原因
-     * @param request 请求
-     * @return 失败响应
-     */
+    // 处理错误请求
     @RequestMapping
     public RestBean<Void> error(HttpServletRequest request) {
+        // 获取错误状态码
         HttpStatus status = this.getStatus(request);
+        // 获取错误信息
         Map<String, Object> errorAttributes = this.getErrorAttributes(request, this.getAttributeOptions());
+        // 转换错误信息
         String message = this.convertErrorMessage(status)
                 .orElse(errorAttributes.get("message").toString());
+        // 返回错误信息
         return RestBean.failure(status.value(), message);
     }
 
-    /**
-     * 对于一些特殊的状态码，错误信息转换
-     * @param status 状态码
-     * @return 错误信息
-     */
+    // 根据错误状态码转换错误信息
     private Optional<String> convertErrorMessage(HttpStatus status){
         String value = switch (status.value()) {
             case 400 -> "请求参数有误";
@@ -53,10 +47,7 @@ public class ErrorPageController extends AbstractErrorController {
         return Optional.ofNullable(value);
     }
 
-    /**
-     * 错误属性获取选项，这里额外添加了错误消息和异常类型
-     * @return 选项
-     */
+    // 获取错误属性选项
     private ErrorAttributeOptions getAttributeOptions(){
         return ErrorAttributeOptions
                 .defaults()

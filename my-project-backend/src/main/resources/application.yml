@@ -1,41 +1,82 @@
+# Spring配置
 spring:
+  # 邮件配置
   mail:
+    # 邮件服务器地址
     host: smtp.163.com
+    # 邮件发送者账号
     username: 17850096172@163.com
+    # 邮件发送者密码
     password: WAmB77xjzsvwkaxR
+  # RabbitMQ配置
   rabbitmq:
+    # RabbitMQ服务器地址
     addresses: 192.168.56.102
+    # RabbitMQ用户名
     username: guest
+    # RabbitMQ密码
     password: guest
+    # RabbitMQ虚拟主机
     virtual-host: /
+  # 安全配置
   security:
+    # 过滤器配置
     filter:
+      # 过滤器顺序
       order: -100
+    # JWT配置
     jwt:
+      # 密钥
       key: password
+      # 过期时间
       expire: 7
+      # 限制配置
       limit:
+        # 基础限制
         base: 10
+        # 升级限制
         upgrade: 300
+        # 频率限制
         frequency: 30
+  # 数据配置
   data:
+    # Redis配置
     redis:
+      # Redis服务器地址
       host: 192.168.56.102
+      # Redis服务器端口
       port: 6379
+      # Redis数据库
       database: 0
+  # 数据源配置
   datasource:
+    # 数据库连接URL
     url: jdbc:mysql://localhost:3306/test
+    # 数据库用户名
     username: root
+    # 数据库密码
     password: 123456
+    # 数据库驱动类名
     driver-class-name: com.mysql.cj.jdbc.Driver
+  # Web配置
   web:
+    # 验证配置
     verify:
+      # 邮件验证限制
       mail-limit: 60
+    # 流量控制配置
     flow:
+      # 时间段
       period: 3
+      # 限制数量
       limit: 50
+      # 阻塞时间
       block: 30
+    # 跨域配置
     cors:
+      # 允许的源
       origin: '*'
+      # 是否允许发送Cookie
       credentials: false
+      # 允许的请求方法
       methods: '*'

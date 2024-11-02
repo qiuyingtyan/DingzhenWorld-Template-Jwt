@@ -1,28 +1,34 @@
 import axios from "axios";
 import {ElMessage} from "element-plus";
 
+// 定义授权项名称
 const authItemName = "authorize"
 
+// 获取授权头
 const accessHeader = () => {
     return {
         'Authorization': `Bearer ${takeAccessToken()}`
     }
 }
 
+// 默认错误处理函数
 const defaultError = (error) => {
     console.error(error)
     ElMessage.error('发生了一些错误，请联系管理员')
 }
 
+// 默认失败处理函数
 const defaultFailure = (message, status, url) => {
     console.warn(`请求地址: ${url}, 状态码: ${status}, 错误信息: ${message}`)
     ElMessage.warning(message)
 }
 
+// 获取授权令牌
 function takeAccessToken() {
     const str = localStorage.getItem(authItemName) || sessionStorage.getItem(authItemName);
     if(!str) return null
     const authObj = JSON.parse(str)
+    // 判断授权令牌是否过期
     if(new Date(authObj.expire) <= new Date()) {
         deleteAccessToken()
         ElMessage.warning("登录状态已过期，请重新登录！")
@@ -31,6 +37,7 @@ function takeAccessToken() {
     return authObj.token
 }
 
+// 存储授权令牌
 function storeAccessToken(remember, token, expire){
     const authObj = {
         token: token,
@@ -43,11 +50,13 @@ function storeAccessToken(remember, token, expire){
         sessionStorage.setItem(authItemName, str)
 }
 
+// 删除授权令牌
 function deleteAccessToken() {
     localStorage.removeItem(authItemName)
     sessionStorage.removeItem(authItemName)
 }
 
+// 内部POST请求
 function internalPost(url, data, headers, success, failure, error = defaultError){
     axios.post(url, data, { headers: headers }).then(({data}) => {
         if(data.code === 200)
@@ -57,6 +66,7 @@ function internalPost(url, data, headers, success, failure, error = defaultError
     }).catch(err => error(err))
 }
 
+// 内部GET请求
 function internalGet(url, headers, success, failure, error = defaultError){
     axios.get(url, { headers: headers }).then(({data}) => {
         if(data.code === 200)
@@ -66,6 +76,7 @@ function internalGet(url, headers, success, failure, error = defaultError){
     }).catch(err => error(err))
 }
 
+// 登录
 function login(username, password, remember, success, failure = defaultFailure){
     internalPost('/api/auth/login', {
         username: username,
@@ -79,10 +90,12 @@ function login(username, password, remember, success, failure = defaultFailure){
     }, failure)
 }
 
+// POST请求
 function post(url, data, success, failure = defaultFailure) {
     internalPost(url, data, accessHeader() , success, failure)
 }
 
+// 登出
 function logout(success, failure = defaultFailure){
     get('/api/auth/logout', () => {
         deleteAccessToken()
@@ -91,10 +104,12 @@ function logout(success, failure = defaultFailure){
     }, failure)
 }
 
+// GET请求
 function get(url, success, failure = defaultFailure) {
     internalGet(url, accessHeader(), success, failure)
 }
 
+// 判断是否未授权
 function unauthorized() {
     return !takeAccessToken()
 }

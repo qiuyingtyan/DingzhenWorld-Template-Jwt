@@ -10,31 +10,30 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-/**
- * 用于处理邮件发送的消息队列监听器
- */
 @Component
 @RabbitListener(queues = "mail")
 public class MailQueueListener {
 
+    // 注入JavaMailSender
     @Resource
     JavaMailSender sender;
 
+    // 注入邮件发送者
     @Value("${spring.mail.username}")
     String username;
 
-    /**
-     * 处理邮件发送
-     * @param data 邮件信息
-     */
+    // 监听队列，处理消息
     @RabbitHandler
     public void sendMailMessage(Map<String, Object> data) {
+        // 获取邮件地址
         String email = data.get("email").toString();
+        // 获取验证码
         Integer code = (Integer) data.get("code");
+        // 根据消息类型创建邮件消息
         SimpleMailMessage message = switch (data.get("type").toString()) {
             case "register" ->
-                    createMessage("欢迎注册我们的网站",
-                            "您的邮件注册验证码为: "+code+"，有效时间3分钟，为了保障您的账户安全，请勿向他人泄露验证码信息。",
+                    createMessage("欢迎注册顶针的世界",
+                            "您的邮件注册验证码为: "+code+"，有效时间3分钟，为了保障你的马，请向他人泄露验证码信息。",
                             email);
             case "reset" ->
                     createMessage("您的密码重置邮件",
@@ -42,17 +41,13 @@ public class MailQueueListener {
                             email);
             default -> null;
         };
+        // 如果消息为空，则返回
         if(message == null) return;
+        // 发送邮件
         sender.send(message);
     }
 
-    /**
-     * 快速封装简单邮件消息实体
-     * @param title 标题
-     * @param content 内容
-     * @param email 收件人
-     * @return 邮件实体
-     */
+    // 创建邮件消息
     private SimpleMailMessage createMessage(String title, String content, String email){
         SimpleMailMessage message = new SimpleMailMessage();
         message.setSubject(title);

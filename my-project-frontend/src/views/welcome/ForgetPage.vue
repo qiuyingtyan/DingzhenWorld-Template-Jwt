@@ -1,11 +1,13 @@
 <template>
     <div>
+        <!-- 步骤条 -->
         <div style="margin: 30px 20px">
             <el-steps :active="active" finish-status="success" align-center>
                 <el-step title="验证电子邮件" />
                 <el-step title="重新设定密码" />
             </el-steps>
         </div>
+        <!-- 验证电子邮件 -->
         <transition name="el-fade-in-linear" mode="out-in">
             <div style="text-align: center;margin: 0 20px;height: 100%" v-if="active === 0">
                 <div style="margin-top: 80px">
@@ -45,6 +47,7 @@
                 </div>
             </div>
         </transition>
+        <!-- 重新设定密码 -->
         <transition name="el-fade-in-linear" mode="out-in">
             <div style="text-align: center;margin: 0 20px;height: 100%" v-if="active === 1">
                 <div style="margin-top: 80px">
@@ -84,8 +87,10 @@ import {get, post} from "@/net";
 import {ElMessage} from "element-plus";
 import router from "@/router";
 
+// 当前步骤
 const active = ref(0)
 
+// 表单数据
 const form = reactive({
     email: '',
     code: '',
@@ -93,6 +98,7 @@ const form = reactive({
     password_repeat: '',
 })
 
+// 验证密码
 const validatePassword = (rule, value, callback) => {
     if (value === '') {
         callback(new Error('请再次输入密码'))
@@ -103,6 +109,7 @@ const validatePassword = (rule, value, callback) => {
     }
 }
 
+// 验证规则
 const rules = {
     email: [
         { required: true, message: '请输入邮件地址', trigger: 'blur' },
@@ -120,15 +127,20 @@ const rules = {
     ],
 }
 
+// 表单引用
 const formRef = ref()
+// 电子邮件是否有效
 const isEmailValid = ref(false)
+// 冷却时间
 const coldTime = ref(0)
 
+// 验证表单
 const onValidate = (prop, isValid) => {
     if(prop === 'email')
         isEmailValid.value = isValid
 }
 
+// 验证电子邮件
 const validateEmail = () => {
     coldTime.value = 60
     get(`/api/auth/ask-code?email=${form.email}&type=reset`, () => {
@@ -145,6 +157,7 @@ const validateEmail = () => {
     })
 }
 
+// 确认重置密码
 const confirmReset = () => {
     formRef.value.validate((isValid) => {
         if(isValid) {
@@ -156,6 +169,7 @@ const confirmReset = () => {
     })
 }
 
+// 重置密码
 const doReset = () => {
     formRef.value.validate((isValid) => {
         if(isValid) {

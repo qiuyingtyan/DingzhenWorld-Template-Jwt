@@ -1,11 +1,14 @@
 <template>
     <div style="text-align: center;margin: 0 20px">
+        <!-- 注册新用户 -->
         <div style="margin-top: 100px">
             <div style="font-size: 25px;font-weight: bold">注册新用户</div>
-            <div style="font-size: 14px;color: grey">欢迎注册我们的学习平台，请在下方填写相关信息</div>
+            <div style="font-size: 14px;color: grey">欢迎注册顶针的世界，请在下方填写相关信息</div>
         </div>
+        <!-- 表单 -->
         <div style="margin-top: 50px">
             <el-form :model="form" :rules="rules" @validate="onValidate" ref="formRef">
+                <!-- 用户名 -->
                 <el-form-item prop="username">
                     <el-input v-model="form.username" :maxlength="8" type="text" placeholder="用户名">
                         <template #prefix>
@@ -13,6 +16,7 @@
                         </template>
                     </el-input>
                 </el-form-item>
+                <!-- 密码 -->
                 <el-form-item prop="password">
                     <el-input v-model="form.password" :maxlength="16" type="password" placeholder="密码">
                         <template #prefix>
@@ -20,6 +24,7 @@
                         </template>
                     </el-input>
                 </el-form-item>
+                <!-- 重复密码 -->
                 <el-form-item prop="password_repeat">
                     <el-input v-model="form.password_repeat" :maxlength="16" type="password" placeholder="重复密码">
                         <template #prefix>
@@ -27,6 +32,7 @@
                         </template>
                     </el-input>
                 </el-form-item>
+                <!-- 电子邮件地址 -->
                 <el-form-item prop="email">
                     <el-input v-model="form.email" type="email" placeholder="电子邮件地址">
                         <template #prefix>
@@ -34,6 +40,7 @@
                         </template>
                     </el-input>
                 </el-form-item>
+                <!-- 验证码 -->
                 <el-form-item prop="code">
                     <el-row :gutter="10" style="width: 100%">
                         <el-col :span="17">
@@ -53,9 +60,11 @@
                 </el-form-item>
             </el-form>
         </div>
+        <!-- 注册按钮 -->
         <div style="margin-top: 80px">
             <el-button style="width: 270px" type="warning" @click="register" plain>立即注册</el-button>
         </div>
+        <!-- 登录链接 -->
         <div style="margin-top: 20px">
             <span style="font-size: 14px;line-height: 15px;color: grey">已有账号? </span>
             <el-link type="primary" style="translate: 0 -2px" @click="router.push('/')">立即登录</el-link>
@@ -70,6 +79,7 @@ import {reactive, ref} from "vue";
 import {ElMessage} from "element-plus";
 import {get, post} from "@/net";
 
+// 表单数据
 const form = reactive({
     username: '',
     password: '',
@@ -78,6 +88,7 @@ const form = reactive({
     code: ''
 })
 
+// 验证用户名
 const validateUsername = (rule, value, callback) => {
     if (value === '') {
         callback(new Error('请输入用户名'))
@@ -88,6 +99,7 @@ const validateUsername = (rule, value, callback) => {
     }
 }
 
+// 验证密码
 const validatePassword = (rule, value, callback) => {
     if (value === '') {
         callback(new Error('请再次输入密码'))
@@ -98,6 +110,7 @@ const validatePassword = (rule, value, callback) => {
     }
 }
 
+// 表单验证规则
 const rules = {
     username: [
         { validator: validateUsername, trigger: ['blur', 'change'] },
@@ -119,15 +132,20 @@ const rules = {
     ]
 }
 
+// 表单引用
 const formRef = ref()
+// 邮箱验证状态
 const isEmailValid = ref(false)
+// 冷却时间
 const coldTime = ref(0)
 
+// 验证表单
 const onValidate = (prop, isValid) => {
     if(prop === 'email')
         isEmailValid.value = isValid
 }
 
+// 注册
 const register = () => {
     formRef.value.validate((isValid) => {
         if(isValid) {
@@ -146,6 +164,7 @@ const register = () => {
     })
 }
 
+// 验证邮箱
 const validateEmail = () => {
     coldTime.value = 60
     get(`/api/auth/ask-code?email=${form.email}&type=register`, () => {
