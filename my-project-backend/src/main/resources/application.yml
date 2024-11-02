@@ -14,6 +14,10 @@ spring:
     jwt:
       key: password
       expire: 7
+      limit:
+        base: 10
+        upgrade: 300
+        frequency: 30
   data:
     redis:
       host: 192.168.56.102
@@ -24,4 +28,14 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
-
+  web:
+    verify:
+      mail-limit: 60
+    flow:
+      period: 3
+      limit: 50
+      block: 30
+    cors:
+      origin: '*'
+      credentials: false
+      methods: '*'
